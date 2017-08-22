@@ -3,6 +3,11 @@
 # dependencies
 /node_modules
 
+.idea/libraries/
+.idea/dictionaries/
+.idea/tasks.xml
+.idea/workspace.xml
+
 # testing
 /coverage
 
