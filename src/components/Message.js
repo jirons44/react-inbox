@@ -16,9 +16,9 @@ const Message = ({ message, onChange }) => {
                 <div className="col-xs-1">
                     <div className="row">
                         <div className="col-xs-2">
-                            <input name="messageChecked"
-                                   type="checkbox"
-                                   defaultChecked={message.selected}
+                            <input type="checkbox"
+                                   name="messageChecked"
+                                   checked={!!message.selected}
                                    onChange={ handleMessageSelected }
                             />
                         </div>

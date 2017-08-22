@@ -3,15 +3,15 @@ import React from 'react';
 const Toolbar = ({
          messages,
          onBulkChecked,
-         onMarkCheckedRead
+         onMarkCheckedRead,
+         onAddRemoveLabel,
+         onDeleteMessages
 }) => {
 
     const numOfUnreadMessages = () => {
         let count= messages.reduce( (sum, message) => {
             return sum + (message.read ? 0:1)
         }, 0);
-
-        // console.log("numOfUnreadMessages count=", count );
 
         return (count);
     }
@@ -29,7 +29,11 @@ const Toolbar = ({
     }
 
     const handleAddLabel = (e) => {
-        console.log("handleAddLabel= " );
+        if(e.target.value) onAddRemoveLabel(e.target.value, true);
+    }
+
+    const handleRemoveLabel = (e) => {
+        if(e.target.value) onAddRemoveLabel(e.target.value, false);
     }
 
     return (
@@ -42,9 +46,8 @@ const Toolbar = ({
                     unread messages
                 </p>
 
-                <button className="btn btn-default">
-                    <i className={`fa fa-${areAllMessagesSelected()  ? 'check-' : areSomeMessagesSelected() ? 'minus-': ''}square-o`}
-                       onClick={ handleMessagesSelected } ></i>
+                <button className="btn btn-default" onClick={ handleMessagesSelected }>
+                    <i className={`fa fa-${areAllMessagesSelected()  ? 'check-' : areSomeMessagesSelected() ? 'minus-': ''}square-o`}></i>
                 </button>
 
                 <button className="btn btn-default"
@@ -61,8 +64,8 @@ const Toolbar = ({
 
                 <select className="form-control label-select"
                         disabled={ !areSomeMessagesSelected() }
-                        selected="Apply Label">
-                    <option>Apply label</option>
+                        onChange={handleAddLabel}>
+                    <option value="">Apply label</option>
                     <option value="dev">dev</option>
                     <option value="personal">personal</option>
                     <option value="gschool">gschool</option>
@@ -70,8 +73,7 @@ const Toolbar = ({
 
                 <select className="form-control label-select"
                         disabled={ !areSomeMessagesSelected() }
-                        selected="Remove Label"
-                        onChange={this.handleAddLabel}>
+                        onChange={handleRemoveLabel}>
                     <option>Remove label</option>
                     <option value="dev">dev</option>
                     <option value="personal">personal</option>
@@ -79,7 +81,8 @@ const Toolbar = ({
                 </select>
 
                 <button className="btn btn-default"
-                        disabled={ !areSomeMessagesSelected() }>
+                        disabled={ !areSomeMessagesSelected() }
+                        onClick={ onDeleteMessages }>
                     <i className="fa fa-trash-o"></i>
                 </button>
             </div>
