@@ -18,26 +18,19 @@ class App extends Component {
         this.setState({ messages: MessagesApi.getAllMessages() });
     }
 
-    handleMessageChanged = updatedMessage => {
-        const indexOfMessageToUpdate = this.state.messages.findIndex(message => {return message.id === updatedMessage.id;});
-        const messages = [...this.state.messages];
-        messages[indexOfMessageToUpdate] = updatedMessage;
-        this.setState({ messages });
-    }
-
-    handleBulkMessageChecked = isAllSelected  => {
+    handleOnBulkSelectedClick = isAllSelected  => {
         const messages = [...this.state.messages];
         messages.forEach(item => item.selected = isAllSelected);
         this.setState({ messages });
     }
 
-    handleMarkcheckedAsRead = isRead => {
+    handelOnReadUnreadClick = isRead => {
         const messages = [...this.state.messages];
         messages.forEach(message => message.selected ? message.read = isRead:'');
         this.setState({ messages });
     }
 
-    handleAddRemoveLabels = (labelName, isAdd ) => {
+    handleOnAddRemoveLabels = (labelName, isAdd ) => {
         const messages = [...this.state.messages];
         messages.forEach(message => {
             if (message.selected) {
@@ -59,16 +52,24 @@ class App extends Component {
         this.setState({ messages })            ;
     }
 
+    handleMessageChanged = updatedMessage => {
+        const indexOfMessageToUpdate = this.state.messages.findIndex(message => {return message.id === updatedMessage.id;});
+        const messages = [...this.state.messages];
+        messages[indexOfMessageToUpdate] = updatedMessage;
+        this.setState({ messages });
+    }
+
+
     render() {
         if (!this.state.messages.length) return (<div>Loading...</div>)
         return (
           <div>
               <ToolBar
                   messages={ this.state.messages }
-                  onBulkChecked={ this.handleBulkMessageChecked }
-                  onMarkCheckedRead= {this.handleMarkcheckedAsRead }
-                  onAddRemoveLabel={ this.handleAddRemoveLabels }
+                  onBulkSelected={ this.handleOnBulkSelectedClick}
+                  onAddRemoveLabel={ this.handleOnAddRemoveLabels }
                   onDeleteMessages={ this.handleOnDeleteMessages }
+                  onReadUnreadClicked={ this.handelOnReadUnreadClick }
               />
               <Messages
                   messages={ this.state.messages }

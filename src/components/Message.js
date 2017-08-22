@@ -6,7 +6,7 @@ const Message = ({ message, onChange }) => {
         onChange( {...message, selected: !message.selected });
     }
 
-    const handleStarClicked = () => {
+    const handleStarredClicked = () => {
         onChange( {...message, starred: !message.starred} );
     }
 
@@ -18,13 +18,13 @@ const Message = ({ message, onChange }) => {
                         <div className="col-xs-2">
                             <input type="checkbox"
                                    name="messageChecked"
-                                   checked={!!message.selected}
+                                   checked={ !!message.selected }
                                    onChange={ handleMessageSelected }
                             />
                         </div>
                         <div className="col-xs-2">
                             <i className={`star fa fa-star${!!message.starred ? '' : '-o'}`}
-                               onClick = { handleStarClicked }></i>
+                               onClick = { handleStarredClicked }></i>
                         </div>
                     </div>
                 </div>
