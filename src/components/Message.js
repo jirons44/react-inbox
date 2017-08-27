@@ -1,18 +1,37 @@
 import React from 'react';
 
-const Message = ({ message, onChange }) => {
+const Message = ({
+     message,
+     onChange
+}) => {
 
     const handleMessageSelected = () => {
-        onChange( {...message, selected: !message.selected });
+        onChange( {...message, selected: !message.selected }, 'selected');
     }
 
     const handleStarredClicked = () => {
-        onChange( {...message, starred: !message.starred} );
+        onChange( {...message, starred: !message.starred }, 'starred' );
+    }
+
+    const renderLabels = () => {
+        return message.labels &&
+            message.labels.map((label, i) => {
+                return <span key={ i } className="label label-warning">{ label }</span>
+        });
+    }
+
+    const rowClassName = () => {
+        let className = 'row message';
+        className += message.read ? ' read': ' unread';
+        if (message.selected) {
+            className += ' selected';
+        }
+        return className;
     }
 
     return (
         <div>
-            <div className={`row message ${message.read ? 'read' : 'unread'} ${message.selected ? 'selected' : ''}`}>
+            <div className={ rowClassName() }>
                 <div className="col-xs-1">
                     <div className="row">
                         <div className="col-xs-2">
@@ -31,11 +50,9 @@ const Message = ({ message, onChange }) => {
 
                 <div className="col-xs-11">
                     {
-                        message.labels.map((label, i) => {
-                            return <span key={ i } className="label label-warning">{ label }</span>
-                        })
+                       renderLabels()
                     }
-                    <a href="#">{ message.subject }</a>
+                    <a onClick={ handleMessageSelected }>{ message.subject }</a>
                 </div>
 
             </div>

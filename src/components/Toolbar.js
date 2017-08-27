@@ -6,13 +6,14 @@ const Toolbar = ({
          onAddRemoveLabel,
          onDeleteMessages,
          onReadUnreadClicked,
+         onToggleComposedForm,
 }) => {
 
     const handleMessagesSelected = () => {
         onBulkSelected( !areAllMessagesSelected() );
     }
 
-    const handleAddLabel = (e) => {
+    const handleAddLabel = e => {
         if(e.target.value) onAddRemoveLabel(e.target.value, true);
     }
 
@@ -32,6 +33,32 @@ const Toolbar = ({
         return messages.some(message => message.selected);
     }
 
+    const renderButtonSelectedClassName = () => {
+        let className = 'fa fa';
+
+        if (areAllMessagesSelected()) {
+            className += '-check'
+        } else if (areSomeMessagesSelected()) {
+            className += '-minus'
+        }
+
+        className += '-square-o';
+
+        return className;
+    }
+
+    const selectProps = () => {
+        return {
+            className: 'form-control label-select',
+            disabled:  !areSomeMessagesSelected(),
+            value: ''
+        }
+    }
+
+    const selectOptions = () => {
+        return ['dev', 'personal', 'gschool'].map( (item, i)  => <option key={i} value={item}>{item}</option>);
+    }
+
     return (
 
         <div className="row toolbar">
@@ -42,9 +69,13 @@ const Toolbar = ({
                     unread message{numOfUnreadMessages()>1?'s':''}
                 </p>
 
+                <a className="btn btn-danger" onClick={onToggleComposedForm}>
+                    <i className="fa fa-plus"></i>
+                </a>
+
                 <button className="btn btn-default"
                         onClick={ handleMessagesSelected }>
-                    <i className={`fa fa-${areAllMessagesSelected()  ? 'check-' : areSomeMessagesSelected() ? 'minus-': ''}square-o`}></i>
+                    <i className={renderButtonSelectedClassName()}></i>
                 </button>
 
                 <button className="btn btn-default"
@@ -59,24 +90,14 @@ const Toolbar = ({
                     Mark As Unread
                 </button>
 
-                <select className="form-control label-select"
-                        disabled={ !areSomeMessagesSelected() }
-                        onChange={ handleAddLabel }
-                        value="">
+                <select {...selectProps() } onChange={ handleAddLabel }>
                     <option value="">Apply label</option>
-                    <option value="dev">dev</option>
-                    <option value="personal">personal</option>
-                    <option value="gschool">gschool</option>
+                    { selectOptions() }
                 </select>
 
-                <select className="form-control label-select"
-                        disabled={ !areSomeMessagesSelected() }
-                        onChange={ handleRemoveLabel }
-                        value="">
+                <select {...selectProps()} onChange={ handleRemoveLabel }>
                     <option value="">Remove label</option>
-                    <option value="dev">dev</option>
-                    <option value="personal">personal</option>
-                    <option value="gschool">gschool</option>
+                    { selectOptions() }
                 </select>
 
                 <button className="btn btn-default"
