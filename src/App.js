@@ -1,150 +1,91 @@
+import { connect } from 'react-redux'
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 
 import './App.css';
 import ToolBar from  './components/Toolbar';
 import Messages from './components/Messages';
-import MessagesApi from './api/messagesApi';
 import ComposedForm from './components/ComposedForm';
+import * as toolbarActions from './actions/toolbarActions';
+import * as messageActions from './actions/messageActions';
 
 class App extends Component {
-    constructor(props) {
-        super(props);
 
-        this.state = {
-            messages: [],
-            toggleComposedForm: false
-        }
+    handleOnBulkSelectedClick = isAllSelected => {
+        this.props.actions.bulkMessageSelected(isAllSelected);
     }
 
-    async componentDidMount() {
-        const messages = await MessagesApi.getAllMessages();
-        this.setState({ messages });
+    handleMessageChecked = (messageId, isSelected) => {
+        this.props.actions.messageSelected(messageId, isSelected);
     }
 
-    handleOnBulkSelectedClick = isAllSelected  => {
-        const messages = [...this.state.messages];
-        messages.forEach(item => item.selected = isAllSelected);
-        this.setState({ messages });
+    handleMessageStarred = (messageId, isStarred) => {
+        this.props.actions.updateMessageStarred(messageId, isStarred);
     }
 
-    handelOnReadUnreadClick = async isRead => {
-        const updatedMessageIds = [];
-        const messages = [...this.state.messages];
-
-        messages.forEach(message => {
-            if (message.selected && message.read !== isRead )
-                message.read = isRead
-                updatedMessageIds.push(message.id)
-        });
-        await MessagesApi.updateReadMessage(updatedMessageIds, isRead);
-        this.setState({ messages });
+    handelOnReadUnreadClick = isRead => {
+        this.props.actions.updateMessageReadUnread(isRead);
     }
-
-    handleOnAddRemoveLabels = async (labelName, isAdd ) => {
-        const updatedMessageIds = [];
-        const messages = [...this.state.messages];
-
-        messages.forEach(message => {
-            if (message.selected)  {
-                let labelExists = this.doesLabelExist(message, labelName);
-
-                if (isAdd && !labelExists) {
-                    updatedMessageIds.push(message.id)
-                    message.labels.push(labelName);
-
-                } else if(!isAdd && labelExists) {
-                    updatedMessageIds.push(message.id)
-                    message.labels = message.labels.filter(label => label !== labelName);
-                }
-            }
-        });
-
-        await MessagesApi.addRemoveLabel(updatedMessageIds, isAdd, labelName);
-        this.setState({ messages });
-    }
-
 
     handleOnDeleteMessages = async () => {
-        const updatedMessageIds = [];
-
-        this.state.messages.forEach(message => {
-            if (message.selected) {
-                updatedMessageIds.push(message.id);
-            }
-        });
-        await MessagesApi.deleteMessages(updatedMessageIds);
-
-        const messages = this.state.messages.filter(message => !message.selected);
-        this.setState({ messages })
-    }
-
-    handleMessageChanged = async (updatedMessage, action) => {
-        if (action === 'starred') {
-            await MessagesApi.updateStarredMessage(updatedMessage.id, updatedMessage.starred);
-        }
-        const indexOfMessageToUpdate = this.state.messages.findIndex(message => {return message.id === updatedMessage.id;});
-        const messages = [...this.state.messages];
-        messages[indexOfMessageToUpdate] = updatedMessage;
-        this.setState({ messages });
+        this.props.actions.deleteSelectedMessages();
     }
 
     handleOnToggleComposedForm = () => {
-        this.setState(prevState => ({ toggleComposedForm: !prevState.toggleComposedForm}))
+        this.props.actions.toggleComposedForm();
+    }
+
+    handleOnAddRemoveLabels = async (labelName, isAdd ) => {
+        this.props.actions.addRemoveLabels(labelName, isAdd);
     }
 
     handleOnAddMessage = async (subject, body) => {
-        const repsonse = await MessagesApi.addMessage(subject, body);
-
-        /*
-        removed(like others) / because for now..refresh is needed manually
-        if (response.success) {
-            const messages = await MessagesApi.getAllMessages();
-            this.setState(prevState => (
-                { messages,
-                  toggleComposedForm: !prevState.toggleComposedForm}))
-        }*/
-
-        const messages = [...this.state.messages];
-        messages.push( {
-            id:'',
-            subject,
-            body,
-            read:false,
-            starred:false,
-            labels:[]
-        });
-
-        this.setState(prevState => (
-            { messages,
-                toggleComposedForm: !prevState.toggleComposedForm}))
-
+        this.props.actions.addMessage(subject, body);
     }
 
-    doesLabelExist = (message, labelName) => {
-        let indexOfItem = message.labels.findIndex(label => {return label === labelName;});
-        return indexOfItem !== -1;
-    }
     render() {
-        if (!this.state.messages.length) return (<div>Loading...</div>)
+        if (!this.props.messages.length) {
+            return (
+                <div>Loading...</div>)
+        }
+
         return (
           <div>
               <ToolBar
-                  messages={ this.state.messages }
+                  messages={ this.props.messages }
                   onBulkSelected={ this.handleOnBulkSelectedClick}
                   onAddRemoveLabel={ this.handleOnAddRemoveLabels }
                   onDeleteMessages={ this.handleOnDeleteMessages }
                   onReadUnreadClicked={ this.handelOnReadUnreadClick }
                   onToggleComposedForm={ this.handleOnToggleComposedForm}
               />
-              { this.state.toggleComposedForm &&
+              { this.props.displayComposedForm &&
                 <ComposedForm onAddMessage={this.handleOnAddMessage}/> }
               <Messages
-                  messages={ this.state.messages }
-                  onChanged={ this.handleMessageChanged }
+                  messages={ this.props.messages }
+                  onChanged={ this.handleMessageStarred }
+                  onMessageChecked= { this.handleMessageChecked }
               />
           </div>
         );
     }
 }
 
-export default App;
+const mapStateToProps = state => ({
+    messages: state.message.messages,
+    displayComposedForm: state.toolbarActions.toggleComposedForm
+})
+
+const mapDispatchToProps = dispatch => {
+    return {
+        actions: bindActionCreators({
+            ...toolbarActions,
+            ...messageActions
+        }, dispatch)
+    };
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(App)

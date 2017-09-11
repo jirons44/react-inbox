@@ -1,11 +1,26 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
+import { Provider } from 'react-redux'
+
 import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import 'font-awesome/css/font-awesome.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import 'font-awesome/css/font-awesome.css';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import App from './App';
+import initialState from './reducers/initialState'
+import configureStore from './store/configureStore';
+import {fetchMessages} from './actions/messageActions';
+import registerServiceWorker from './registerServiceWorker';
+
+const store = configureStore(initialState);
+store.dispatch(fetchMessages());
+
+render(
+    <Provider store={store}>
+        <App />
+    </Provider>,
+    document.getElementById('root')
+);
+
 registerServiceWorker();

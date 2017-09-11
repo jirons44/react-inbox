@@ -2,7 +2,11 @@ import React from 'react';
 
 import Message from './Message';
 
-const Messages = ({ messages, onChanged }) => (
+const Messages = ({
+  messages,
+  onChanged,
+  onMessageChecked
+}) => (
     <div>
 
         {
@@ -12,6 +16,7 @@ const Messages = ({ messages, onChanged }) => (
                         key={i}
                         message={ message }
                         onChange={ onChanged }
+                        onMessageChecked={ onMessageChecked }
                     />
                 )
             })

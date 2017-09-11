@@ -2,15 +2,16 @@ import React from 'react';
 
 const Message = ({
      message,
-     onChange
+     onChange,
+     onMessageChecked
 }) => {
 
     const handleMessageSelected = () => {
-        onChange( {...message, selected: !message.selected }, 'selected');
+        onMessageChecked( message.id, !message.selected);
     }
 
     const handleStarredClicked = () => {
-        onChange( {...message, starred: !message.starred }, 'starred' );
+        onChange(message.id, !message.starred );
     }
 
     const renderLabels = () => {
