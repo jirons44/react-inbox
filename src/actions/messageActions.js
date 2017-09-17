@@ -1,171 +1,71 @@
+import * as types from '../actions/actionTypes';
 import MessagesApi from '../api/messagesApi';
-import {
-    LOAD_MESSAGES,
-    BULK_MESSAGE_SELECTED,
-    MESSAGE_SELECTED,
-    UPDATE_READ_MESSAGES,
-    UPDATE_STARRED_MESSAGE,
-    DELETE_MESSAGES,
-    ADD_REMOVE_LABELS,
-    TOGGEL_COMPOSED_FORM,
-    CREATE_MESSAGE
-} from './actionTypes';
 
 export function fetchMessages() {
-    return async (dispatch) => {
+    return async dispatch => {
         const messages = await MessagesApi.getAllMessages();
+        dispatch({ type: types.LOAD_MESSAGES, messages })
+    }
+}
 
-        dispatch({ type: LOAD_MESSAGES, messages })
+export function deleteSelectedMessages(ids) {
+    return async dispatch => {
+       await MessagesApi.deleteMessages(ids);
+       dispatch({ type: types.DELETE_MESSAGES, ids });
     }
 }
 
 export function addMessage(subject, body) {
-    return async (dispatch, getState) => {
-        const messages = getState().message.messages;
+    return async dispatch => {
+        const message = await MessagesApi.addMessage(subject, body);
 
-        await MessagesApi.addMessage(subject, body);
-
-        const newMessages = [...messages, {
-            id:'',
-            subject,
-            body,
-            read: false,
-            starred: false,
-            labels:[]
-        }];
-
-        dispatch({type: CREATE_MESSAGE, messages: newMessages});
-        dispatch({type: TOGGEL_COMPOSED_FORM})
+        dispatch({type: types.CREATE_MESSAGE, message});
+        dispatch({type: types.TOGGEL_COMPOSED_FORM})
     }
 }
 
-export function messageSelected(id, isSelected) {
-    return (dispatch, getState) => {
-        const messages = getState().message.messages;
-
-        const newMessages = messages.map( message =>
-            message.id === id ? {...message, selected: isSelected} : message)
-
-        dispatch({ type: MESSAGE_SELECTED, messages: newMessages });
+export function toggelMessageSelected(id) {
+    return dispatch => {
+        dispatch({type: types.TOGGLE_MESSAGE_SELECTED, id});
     }
 }
 
 export function bulkMessageSelected(isAllSelected) {
-    return (dispatch, getState) => {
-        const messages = getState().message.messages;
-        const newMessages = messages.map( message =>
-            message.selected !== isAllSelected ? {...message, selected: isAllSelected } : message);
-
-        dispatch({ type: BULK_MESSAGE_SELECTED, messages: newMessages });
+    return dispatch => {
+        dispatch({ type: types.BULK_MESSAGE_SELECTED, selected: isAllSelected });
     }
 }
 
 export function updateMessageStarred(id, isStarred) {
-    return async (dispatch, getState) => {
-        const messages = getState().message.messages;
-
+    return async dispatch => {
         await MessagesApi.updateStarredMessage(id, isStarred);
 
-        const newMessages = messages.map( message =>
-            message.id === id ? {...message, starred: isStarred} : message)
-
-        dispatch({ type: UPDATE_STARRED_MESSAGE, messages: newMessages });
+        dispatch({ type: types.UPDATE_STARRED_MESSAGE, id, starred: isStarred });
     }
 }
 
-export function updateMessageReadUnread(isRead) {
-    return async (dispatch, getState) => {
-        const messages = getState().message.messages;
+export function updateMessageReadUnread(ids, isRead) {
+    return async (dispatch) => {
+        await MessagesApi.updateReadMessage(ids, isRead);
 
-        const updatedMessageIds = getSelectedReadUnreadMessageIds(messages, isRead);
-        await MessagesApi.updateReadMessage(updatedMessageIds, isRead);
-
-        const newMessages = messages.map( message =>
-            message.selected && message.read !== isRead ? {...message, read: isRead} : message);
-
-        dispatch({ type: UPDATE_READ_MESSAGES, messages: newMessages });
+        dispatch({ type: types.UPDATE_READ_MESSAGES, ids, read: isRead });
     }
 }
 
-export function deleteSelectedMessages() {
-    return async (dispatch, getState) => {
-        const messages = getState().message.messages;
+export function addLabel(ids, label) {
+    return async (dispatch) => {
+        await MessagesApi.addRemoveLabel(ids, true, label);
 
-        const deletedMessageIds = getSelectedMessageIds(messages);
-        await MessagesApi.deleteMessages(deletedMessageIds);
-
-        const newMessages = messages.filter(message => !message.selected);
-
-        dispatch({ type: DELETE_MESSAGES, messages: newMessages });
-
+        dispatch({ type: types.ADD_LABELS, ids, label });
     }
 }
 
-export function addRemoveLabels(labelName, isAdd) {
-    return async (dispatch, getState) => {
-        const messages = getState().message.messages;
+export function removeLabel(ids, label) {
+    return async (dispatch) => {
+        await MessagesApi.addRemoveLabel(ids, false, label);
 
-        let updatedMessageIds = [];
-
-        const newMessages = messages.map( message => {
-            let newMessage = {};
-            let newLabels = [];
-            if (message.selected) {
-                let labelExists = doesLabelExist(message, labelName);
-
-                if (isAdd && !labelExists) {
-                    updatedMessageIds.push(message.id)
-                    newLabels = [...message.labels, labelName];
-                    newMessage = {...message, labels: newLabels }
-
-                } else if (!isAdd && labelExists) {
-                    updatedMessageIds.push(message.id)
-                    newLabels = message.labels.filter(label => label !== labelName);
-                    newMessage = {...message, labels: newLabels}
-                } else {
-                    newMessage = message;
-                }
-            } else {
-                newMessage = message;
-            }
-            return newMessage
-        });
-
-        await MessagesApi.addRemoveLabel(updatedMessageIds, isAdd, labelName);
-
-        dispatch({ type: ADD_REMOVE_LABELS, messages: newMessages });
-
+        dispatch({ type: types.REMOVE_LABELS, ids, label });
     }
-}
-
-
-const getSelectedMessageIds = (messages) => {
-    const selectedMessageIds = [];
-
-    messages.forEach(message => {
-        if (message.selected) {
-            selectedMessageIds.push(message.id);
-        }
-    });
-
-    return selectedMessageIds;
-}
-
-const getSelectedReadUnreadMessageIds = (messages, isRead) => {
-    const selectedMessageIds = [];
-
-    messages.forEach(message => {
-        if (message.selected && message.read !== isRead) {
-            selectedMessageIds.push(message.id);
-        }
-    });
-
-    return selectedMessageIds;
-}
-
-const doesLabelExist = (message, labelName) => {
-    let indexOfItem = message.labels.findIndex(label => {return label === labelName;});
-    return indexOfItem !== -1;
 }
 
 /*

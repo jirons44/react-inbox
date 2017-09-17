@@ -4,7 +4,7 @@ import messageReducer from './messageReducer';
 import toolbarReducer from './toolbarReducers';
 
 const rootReducer =  combineReducers({
-    message: messageReducer,
+    messages: messageReducer,
     toolbarActions: toolbarReducer,
 });
 

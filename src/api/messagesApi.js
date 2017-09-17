@@ -38,7 +38,8 @@ class MessagesApi {
         }
 
         const response = await callPostAPI(req);
-        return {success: response.ok};
+        const message = await response.json();
+        return message;
     }
 
     static async updateStarredMessage(messageId, isStarred) {
@@ -102,8 +103,6 @@ class MessagesApi {
 }
 
 export default MessagesApi;
-
-
 
 
 

@@ -1,36 +1,55 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import * as toolbarActions from '../actions/toolbarActions';
+import * as messageActions from '../actions/messageActions';
+import { getSelectedMessageIds } from '../utilities/messagesHelper';
 
 const Toolbar = ({
          messages,
-         onBulkSelected,
-         onAddRemoveLabel,
-         onDeleteMessages,
-         onReadUnreadClicked,
-         onToggleComposedForm,
+         actions,
 }) => {
 
+    const handleDeleteMessages = () => {
+        actions.deleteSelectedMessages(getSelectedMessageIds(messages));
+    }
+
     const handleMessagesSelected = () => {
-        onBulkSelected( !areAllMessagesSelected() );
+        actions.bulkMessageSelected(!areAllMessagesSelected());
+    }
+
+    const handleMessageReadSelected = () => {
+        actions.updateMessageReadUnread(getSelectedMessageIds(messages), true);
+    }
+
+    const handleMessageUnreadSelected = () => {
+        actions.updateMessageReadUnread(getSelectedMessageIds(messages), false);
     }
 
     const handleAddLabel = e => {
-        if(e.target.value) onAddRemoveLabel(e.target.value, true);
+        actions.addLabel(getSelectedMessageIds(messages), e.target.value);
     }
 
     const handleRemoveLabel = (e) => {
-        if(e.target.value) onAddRemoveLabel(e.target.value, false);
+        actions.removeLabel(getSelectedMessageIds(messages), e.target.value);
+    }
+
+    const handleToggleComposedForm = () => {
+        actions.toggleComposedForm();
     }
 
     const numOfUnreadMessages = () => {
-        return messages.reduce( (sum, message) => {return sum + (message.read ? 0:1)}, 0);
+        return messages.allIds.reduce( (sum, id) => {
+            return sum + (messages.byIds[id].read ? 0:1)}, 0);
     }
 
     const areAllMessagesSelected = () => {
-        return messages.every(message => message.selected);
+        return messages.allIds.every(id => messages.byIds[id].selected);
     }
 
     const areSomeMessagesSelected = () => {
-        return messages.some(message => message.selected);
+        return messages.allIds.some(id => messages.byIds[id].selected);
     }
 
     const renderButtonSelectedClassName = () => {
@@ -69,7 +88,7 @@ const Toolbar = ({
                     unread message{numOfUnreadMessages()>1?'s':''}
                 </p>
 
-                <a className="btn btn-danger" onClick={onToggleComposedForm}>
+                <a className="btn btn-danger" onClick={ handleToggleComposedForm }>
                     <i className="fa fa-plus"></i>
                 </a>
 
@@ -80,13 +99,13 @@ const Toolbar = ({
 
                 <button className="btn btn-default"
                         disabled={ !areSomeMessagesSelected() }
-                        onClick={() => onReadUnreadClicked(true) }>
+                        onClick={ handleMessageReadSelected }>
                     Mark As Read
                 </button>
 
                 <button className="btn btn-default"
                         disabled={ !areSomeMessagesSelected() }
-                        onClick={()=> onReadUnreadClicked(false) }>
+                        onClick={ handleMessageUnreadSelected }>
                     Mark As Unread
                 </button>
 
@@ -102,7 +121,7 @@ const Toolbar = ({
 
                 <button className="btn btn-default"
                         disabled={ !areSomeMessagesSelected() }
-                        onClick={ onDeleteMessages }>
+                        onClick={ handleDeleteMessages }>
                     <i className="fa fa-trash-o"></i>
                 </button>
             </div>
@@ -110,4 +129,13 @@ const Toolbar = ({
     )
 }
 
-export default Toolbar;
+const mapDispatchToProps = dispatch => {
+    return {
+        actions: bindActionCreators({
+            ...toolbarActions,
+            ...messageActions
+        }, dispatch)
+    };
+}
+
+export default connect(null, mapDispatchToProps)(Toolbar);

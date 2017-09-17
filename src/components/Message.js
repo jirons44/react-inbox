@@ -1,17 +1,20 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import { toggelMessageSelected, updateMessageStarred } from '../actions/messageActions';
 
 const Message = ({
      message,
-     onChange,
-     onMessageChecked
+     actions
 }) => {
 
     const handleMessageSelected = () => {
-        onMessageChecked( message.id, !message.selected);
+        actions.toggelMessageSelected(message.id);
     }
 
     const handleStarredClicked = () => {
-        onChange(message.id, !message.starred );
+        actions.updateMessageStarred(message.id, !message.starred);
     }
 
     const renderLabels = () => {
@@ -61,4 +64,15 @@ const Message = ({
     )
 }
 
-export default Message;
+
+const mapDispatchToProps = dispatch => {
+    return {
+        actions: bindActionCreators({
+            toggelMessageSelected,
+            updateMessageStarred
+        }, dispatch)
+    };
+}
+
+
+export default connect(null, mapDispatchToProps)(Message);

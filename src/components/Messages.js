@@ -4,21 +4,17 @@ import Message from './Message';
 
 const Messages = ({
   messages,
-  onChanged,
-  onMessageChecked
 }) => (
     <div>
 
         {
-            messages.map( (message, i) => {
-                return (
-                    <Message
-                        key={i}
-                        message={ message }
-                        onChange={ onChanged }
-                        onMessageChecked={ onMessageChecked }
-                    />
-                )
+            messages.allIds.map(id => {
+              return (
+                  <Message
+                      key={id}
+                      message={ messages.byIds[id] }
+                  />
+              )
             })
         }
     </div>

@@ -11,40 +11,12 @@ import * as messageActions from './actions/messageActions';
 
 class App extends Component {
 
-    handleOnBulkSelectedClick = isAllSelected => {
-        this.props.actions.bulkMessageSelected(isAllSelected);
-    }
-
-    handleMessageChecked = (messageId, isSelected) => {
-        this.props.actions.messageSelected(messageId, isSelected);
-    }
-
-    handleMessageStarred = (messageId, isStarred) => {
-        this.props.actions.updateMessageStarred(messageId, isStarred);
-    }
-
-    handelOnReadUnreadClick = isRead => {
-        this.props.actions.updateMessageReadUnread(isRead);
-    }
-
-    handleOnDeleteMessages = async () => {
-        this.props.actions.deleteSelectedMessages();
-    }
-
-    handleOnToggleComposedForm = () => {
-        this.props.actions.toggleComposedForm();
-    }
-
-    handleOnAddRemoveLabels = async (labelName, isAdd ) => {
-        this.props.actions.addRemoveLabels(labelName, isAdd);
-    }
-
     handleOnAddMessage = async (subject, body) => {
         this.props.actions.addMessage(subject, body);
     }
 
     render() {
-        if (!this.props.messages.length) {
+        if (!this.props.messages.allIds.length) {
             return (
                 <div>Loading...</div>)
         }
@@ -53,18 +25,11 @@ class App extends Component {
           <div>
               <ToolBar
                   messages={ this.props.messages }
-                  onBulkSelected={ this.handleOnBulkSelectedClick}
-                  onAddRemoveLabel={ this.handleOnAddRemoveLabels }
-                  onDeleteMessages={ this.handleOnDeleteMessages }
-                  onReadUnreadClicked={ this.handelOnReadUnreadClick }
-                  onToggleComposedForm={ this.handleOnToggleComposedForm}
               />
               { this.props.displayComposedForm &&
                 <ComposedForm onAddMessage={this.handleOnAddMessage}/> }
               <Messages
                   messages={ this.props.messages }
-                  onChanged={ this.handleMessageStarred }
-                  onMessageChecked= { this.handleMessageChecked }
               />
           </div>
         );
@@ -72,7 +37,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-    messages: state.message.messages,
+    messages: state.messages,
     displayComposedForm: state.toolbarActions.toggleComposedForm
 })
 
