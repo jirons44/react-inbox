@@ -15,12 +15,13 @@ export function deleteSelectedMessages(ids) {
     }
 }
 
-export function addMessage(subject, body) {
+export function addMessage(subject, body, history) {
     return async dispatch => {
         const message = await MessagesApi.addMessage(subject, body);
 
         dispatch({type: types.CREATE_MESSAGE, message});
-        dispatch({type: types.TOGGEL_COMPOSED_FORM})
+
+        history.push("/");
     }
 }
 

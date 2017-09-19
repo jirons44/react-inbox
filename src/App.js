@@ -1,6 +1,8 @@
 import { connect } from 'react-redux'
 import React, { Component } from 'react';
+import { Route, withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
+
 
 import './App.css';
 import ToolBar from  './components/Toolbar';
@@ -11,8 +13,8 @@ import * as messageActions from './actions/messageActions';
 
 class App extends Component {
 
-    handleOnAddMessage = async (subject, body) => {
-        this.props.actions.addMessage(subject, body);
+    handleOnAddMessage = async (subject, body, history) => {
+        this.props.actions.addMessage(subject, body, history);
     }
 
     render() {
@@ -23,14 +25,12 @@ class App extends Component {
 
         return (
           <div>
-              <ToolBar
-                  messages={ this.props.messages }
-              />
-              { this.props.displayComposedForm &&
-                <ComposedForm onAddMessage={this.handleOnAddMessage}/> }
-              <Messages
-                  messages={ this.props.messages }
-              />
+              <ToolBar messages={ this.props.messages }/>
+
+              <Route exact path="/compose" component={ props =>
+                  <ComposedForm onAddMessage={this.handleOnAddMessage} {...props} /> }/>
+
+              <Messages />
           </div>
         );
     }
@@ -50,7 +50,7 @@ const mapDispatchToProps = dispatch => {
     };
 }
 
-export default connect(
+export default withRouter(connect(
     mapStateToProps,
     mapDispatchToProps
-)(App)
+)(App))

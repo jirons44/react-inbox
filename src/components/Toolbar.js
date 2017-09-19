@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Link, Switch, Route, withRouter } from 'react-router-dom';
 
-import * as toolbarActions from '../actions/toolbarActions';
 import * as messageActions from '../actions/messageActions';
 import { getSelectedMessageIds } from '../utilities/messagesHelper';
 
@@ -10,7 +10,6 @@ const Toolbar = ({
          messages,
          actions,
 }) => {
-
     const handleDeleteMessages = () => {
         actions.deleteSelectedMessages(getSelectedMessageIds(messages));
     }
@@ -35,10 +34,7 @@ const Toolbar = ({
         actions.removeLabel(getSelectedMessageIds(messages), e.target.value);
     }
 
-    const handleToggleComposedForm = () => {
-        actions.toggleComposedForm();
-    }
-
+    //todo: look at selector  or for messageHelper
     const numOfUnreadMessages = () => {
         return messages.allIds.reduce( (sum, id) => {
             return sum + (messages.byIds[id].read ? 0:1)}, 0);
@@ -78,6 +74,10 @@ const Toolbar = ({
         return ['dev', 'personal', 'gschool'].map( (item, i)  => <option key={i} value={item}>{item}</option>);
     }
 
+    if (!messages.allIds.length) {
+        return (
+            <div>Loading...</div>)
+    }
     return (
 
         <div className="row toolbar">
@@ -88,9 +88,19 @@ const Toolbar = ({
                     unread message{numOfUnreadMessages()>1?'s':''}
                 </p>
 
-                <a className="btn btn-danger" onClick={ handleToggleComposedForm }>
-                    <i className="fa fa-plus"></i>
-                </a>
+                <Switch>
+                    <Route path="/compose" exact render={() => (
+                        <Link to="/" className="btn btn-danger">
+                            <i className='fa fa-minus'></i> </Link>
+
+                            )}/>
+                    <Route render={() => (
+                        <Link to="/compose" className="btn btn-danger">
+                            <i className='fa fa-plus'></i> </Link>
+
+                    )}/>
+
+                </Switch>
 
                 <button className="btn btn-default"
                         onClick={ handleMessagesSelected }>
@@ -129,13 +139,19 @@ const Toolbar = ({
     )
 }
 
+const mapStateToProps = state => ({
+    messages: state.messages
+})
+
 const mapDispatchToProps = dispatch => {
     return {
         actions: bindActionCreators({
-            ...toolbarActions,
             ...messageActions
         }, dispatch)
     };
 }
 
-export default connect(null, mapDispatchToProps)(Toolbar);
+export default withRouter(connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Toolbar));

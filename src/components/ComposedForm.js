@@ -1,17 +1,19 @@
 import React from 'react';
 
 const ComposedForm = ({
+      history,
       onAddMessage
 }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onAddMessage( e.target.subject.value, e.target.body.value);
+        onAddMessage( e.target.subject.value, e.target.body.value, history);
     }
 
     return (
             <form className="form-horizontal well"
-                    onSubmit={ e => handleSubmit(e) }>
+                    onSubmit={ e => handleSubmit(e)
+                    }>
                 <div className="form-group">
                     <div className="col-sm-8 col-sm-offset-2">
                         <h4>Compose Message</h4>
@@ -43,9 +45,9 @@ const ComposedForm = ({
                 </div>
                 <div className="form-group">
                     <div className="col-sm-8 col-sm-offset-2">
-                        <input type="submit"
-                               value="Send"
-                               className="btn btn-primary"/>
+                            <input type="submit"
+                                   value="Send"
+                                   className="btn btn-primary"/>
                     </div>
                 </div>
             </form>

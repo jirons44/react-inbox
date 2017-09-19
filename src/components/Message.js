@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Link, Route, withRouter } from 'react-router-dom';
 
 import { toggelMessageSelected, updateMessageStarred } from '../actions/messageActions';
 
@@ -56,14 +57,20 @@ const Message = ({
                     {
                        renderLabels()
                     }
-                    <a onClick={ handleMessageSelected }>{ message.subject }</a>
+                    <Link to={`/messages/${message.id}`} onClick={ handleMessageSelected }>{ message.subject }</Link>
                 </div>
-
             </div>
+
+                <Route path={`/messages/${message.id}`} render={()=> (
+                    <div className="row message-body">
+                        <div className="col-xs-11 col-xs-offset-1">
+                            This is the body of the message.
+                        </div>
+                    </div>
+                )}/>
         </div>
     )
 }
-
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -75,4 +82,7 @@ const mapDispatchToProps = dispatch => {
 }
 
 
-export default connect(null, mapDispatchToProps)(Message);
+export default withRouter(connect(
+    null,
+    mapDispatchToProps
+)(Message));
