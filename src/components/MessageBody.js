@@ -16,7 +16,6 @@ class MessageBody extends Component {
     }
 
     render() {
-        console.log("componentDidMount", this.props.message);
 
         if (!this.props.message || !this.props.message.body) {
             return null;
