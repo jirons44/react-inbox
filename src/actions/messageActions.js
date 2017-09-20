@@ -8,6 +8,18 @@ export function fetchMessages() {
     }
 }
 
+export function messageBodySelected(id) {
+
+    return async dispatch => {
+        const ids = [id];
+        await MessagesApi.updateReadMessage(ids, true);
+
+
+        const message = await MessagesApi.getMessage(id);
+        dispatch({type: types.GET_MESSAGE_BODY, id, body: message.body})
+    }
+}
+
 export function deleteSelectedMessages(ids) {
     return async dispatch => {
        await MessagesApi.deleteMessages(ids);

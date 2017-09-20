@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link, Route, withRouter } from 'react-router-dom';
 
+import MessageBody from './MessageBody'
 import { toggelMessageSelected, updateMessageStarred } from '../actions/messageActions';
 
 const Message = ({
@@ -62,11 +63,7 @@ const Message = ({
             </div>
 
                 <Route path={`/messages/${message.id}`} render={()=> (
-                    <div className="row message-body">
-                        <div className="col-xs-11 col-xs-offset-1">
-                            This is the body of the message.
-                        </div>
-                    </div>
+                    <MessageBody message={message} />
                 )}/>
         </div>
     )

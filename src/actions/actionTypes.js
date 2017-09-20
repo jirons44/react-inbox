@@ -1,4 +1,5 @@
 export const LOAD_MESSAGES = 'LOAD_MESSAGES';
+export const GET_MESSAGE_BODY = 'GET_MESSAGE_BODY';
 
 export const ADD_LABELS = 'ADD_LABELS';
 export const REMOVE_LABELS = 'REMOVE_LABELS';

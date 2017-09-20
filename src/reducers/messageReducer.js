@@ -40,6 +40,12 @@ function messageReducer(state = initialState , action) {
 
             return {...state, byIds};
 
+        case types.GET_MESSAGE_BODY:
+            byIds = {...state.byIds}
+            byIds[action.id] = {...byIds[action.id], body: action.body}
+
+            return {...state, byIds};
+
         case types.BULK_MESSAGE_SELECTED:
             byIds = {...state.byIds}
             state.allIds.forEach(id => {

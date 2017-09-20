@@ -31,6 +31,13 @@ class MessagesApi {
         return messagesJson._embedded.messages;
     }
 
+    static async getMessage(id) {
+        const messageResponse = await fetch(`${MESSAGES_URL}/${id}${DELAY_URL}`);
+        const message = await messageResponse.json();
+        return message;
+    }
+
+
     static async addMessage(subject, body) {
         const req = {
             subject,
