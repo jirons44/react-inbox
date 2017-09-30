@@ -12,6 +12,7 @@ const Message = ({
 }) => {
 
     const handleMessageSelected = () => {
+        console.log('$$$$$$ checked')
         actions.toggelMessageSelected(message.id);
     }
 
