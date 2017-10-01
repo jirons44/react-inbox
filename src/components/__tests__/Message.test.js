@@ -1,9 +1,10 @@
 import React from 'react';
+import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
 import { connect } from 'react-redux';
-import { Link, Route, withRouter } from 'react-router-dom';
+import { Link, Route, MemoryRouter } from 'react-router-dom';
 
-import Message from '../Message';
+import Message, { mapDispatchToProps } from '../Message';
 
 let wrapper;
 let mockCheckboxChangedFn = jest.fn();
@@ -24,7 +25,9 @@ const mockActions = {
 }
 
 const createMessageComponent = (message, actions) => {
-    wrapper = shallow(<Message.WrappedComponent message={message} actions={actions} />)
+    wrapper = shallow(
+         <Message.WrappedComponent message={message} actions={actions} />
+    );
 }
 
 describe('Message Component', () => {
@@ -101,6 +104,18 @@ describe('Message Component', () => {
             const component = wrapper.find('MessageBody');
 
             expect(component.exists()).toBeFalsy();
+        });
+
+        it('renders MessageBody when Route path /messages/1', () => {
+            // createMessageComponent(aMessage, mockActions);
+
+            // const component = renderer.create(
+            //     <MemoryRouter initialEntries={[ '/messages/1' ]}>
+            //         <Message message={aMessage} actions={mockActions} />
+            //     </MemoryRouter>
+            // );
+
+//            console.log('@@@@', component);
         });
 
         describe('renders Classnames when the message is selected vs unselected', () => {
@@ -197,7 +212,23 @@ describe('Message Component', () => {
             expect(mockActions.updateMessageStarred).toHaveBeenCalledTimes(1);
         })
     });
+
+    describe('connect', () => {
+       it('mapDispatchToProps', () => {
+           const dispatch = jest.fn();
+
+           const result = mapDispatchToProps(dispatch);
+
+           result.actions.toggelMessageSelected();
+           result.actions.updateMessageStarred();
+
+           expect(dispatch.mock.calls.length).toBe(2);
+       })
+    });
+
 });
+
+
 
 /*
 

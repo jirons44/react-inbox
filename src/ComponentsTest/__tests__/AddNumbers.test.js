@@ -10,7 +10,7 @@ let wrapper;
  */
 
 const createAddNumbersComponent = () => {
-    wrapper = mount(<AddNumbers />);
+    wrapper = shallow(<AddNumbers />);
 }
 
 

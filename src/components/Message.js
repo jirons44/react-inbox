@@ -12,7 +12,6 @@ const Message = ({
 }) => {
 
     const handleMessageSelected = () => {
-        console.log('$$$$$$ checked')
         actions.toggelMessageSelected(message.id);
     }
 
@@ -70,7 +69,7 @@ const Message = ({
     )
 }
 
-const mapDispatchToProps = dispatch => {
+export const mapDispatchToProps = dispatch => {
     return {
         actions: bindActionCreators({
             toggelMessageSelected,
