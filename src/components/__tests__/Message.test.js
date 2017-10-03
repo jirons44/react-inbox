@@ -3,6 +3,8 @@ import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
 import { connect } from 'react-redux';
 import { Link, Route, MemoryRouter } from 'react-router-dom';
+import ReactDOM from 'react-dom'
+
 
 import Message, { mapDispatchToProps } from '../Message';
 
@@ -107,11 +109,17 @@ describe('Message Component', () => {
         });
 
         it('renders MessageBody when Route path /messages/1', () => {
+            //TODO: come on...get this test to work
+            // const component = ReactDOM.render(
+            //         <MemoryRouter initialEntries={[ '/messages/1' ]}>
+            //             <Message message={aMessage} actions={mockActions} />
+            //         </MemoryRouter>
+            // , div);
             // createMessageComponent(aMessage, mockActions);
 
             // const component = renderer.create(
             //     <MemoryRouter initialEntries={[ '/messages/1' ]}>
-            //         <Message message={aMessage} actions={mockActions} />
+            //         <Message.WrappedComponent message={aMessage} actions={mockActions} />
             //     </MemoryRouter>
             // );
 

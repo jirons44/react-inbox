@@ -4,7 +4,7 @@ import { getAllIds, getByIds, toggleSelectedMessage, doesLabelExist } from '../u
 // configureStore already set up state globally..do i need here...probably not
 const initialState = {
     allIds: [],
-    byIds: []
+    byIds: {}
 }
 
 function messageReducer(state = initialState , action) {
