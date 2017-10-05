@@ -22,3 +22,22 @@ export const toggleSelectedMessage = message => {
     return {...message, selected: !message.selected}
 }
 
+/*
+todo: look at selector  or for messageHelper
+http://redux.js.org/docs/recipes/ComputingDerivedData.html
+*/
+
+export const numOfUnreadMessages = messages => {
+    return messages.allIds.reduce( (sum, id) => {
+        return sum + (messages.byIds[id].read ? 0:1)}, 0);
+}
+
+export const areAllMessagesSelected = messages => {
+    return messages.allIds.every(id => messages.byIds[id].selected);
+}
+
+export const areSomeMessagesSelected = messages => {
+    return messages.allIds.some(id => messages.byIds[id].selected);
+}
+
+

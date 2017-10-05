@@ -11,14 +11,6 @@ const Message = ({
      actions
 }) => {
 
-    const handleMessageSelected = () => {
-        actions.toggelMessageSelected(message.id);
-    }
-
-    const handleStarredClicked = () => {
-        actions.updateMessageStarred(message.id, !message.starred);
-    }
-
     const renderLabels = () => {
         return message.labels &&
             message.labels.map((label, i) => {
@@ -44,12 +36,12 @@ const Message = ({
                             <input type="checkbox"
                                    name="messageChecked"
                                    checked={ !!message.selected }
-                                   onChange={ handleMessageSelected }
+                                   onChange={()=> actions.toggelMessageSelected(message.id) }
                             />
                         </div>
                         <div className="col-xs-2">
                             <i className={`star fa fa-star${!!message.starred ? '' : '-o'}`}
-                               onClick = { handleStarredClicked }></i>
+                               onClick = { ()=> actions.updateMessageStarred(message.id, !message.starred) }></i>
                         </div>
                     </div>
                 </div>
@@ -58,7 +50,7 @@ const Message = ({
                     {
                        renderLabels()
                     }
-                    <Link to={`/messages/${message.id}`} onClick={ handleMessageSelected }>{ message.subject }</Link>
+                    <Link to={`/messages/${message.id}`} onClick={()=> actions.toggelMessageSelected(message.id)}>{ message.subject }</Link>
                 </div>
             </div>
 

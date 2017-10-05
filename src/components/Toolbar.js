@@ -4,56 +4,22 @@ import { bindActionCreators } from 'redux';
 import { Link, Switch, Route, withRouter } from 'react-router-dom';
 
 import * as messageActions from '../actions/messageActions';
-import { getSelectedMessageIds } from '../utilities/messagesHelper';
+import { getSelectedMessageIds,
+        numOfUnreadMessages,
+        areAllMessagesSelected,
+        areSomeMessagesSelected } from '../utilities/messagesHelper';
 
 const Toolbar = ({
          messages,
          actions,
 }) => {
-    const handleDeleteMessages = () => {
-        actions.deleteSelectedMessages(getSelectedMessageIds(messages));
-    }
-
-    const handleMessagesSelected = () => {
-        actions.bulkMessageSelected(!areAllMessagesSelected());
-    }
-
-    const handleMessageReadSelected = () => {
-        actions.updateMessageReadUnread(getSelectedMessageIds(messages), true);
-    }
-
-    const handleMessageUnreadSelected = () => {
-        actions.updateMessageReadUnread(getSelectedMessageIds(messages), false);
-    }
-
-    const handleAddLabel = e => {
-        actions.addLabel(getSelectedMessageIds(messages), e.target.value);
-    }
-
-    const handleRemoveLabel = (e) => {
-        actions.removeLabel(getSelectedMessageIds(messages), e.target.value);
-    }
-
-    //todo: look at selector  or for messageHelper
-    const numOfUnreadMessages = () => {
-        return messages.allIds.reduce( (sum, id) => {
-            return sum + (messages.byIds[id].read ? 0:1)}, 0);
-    }
-
-    const areAllMessagesSelected = () => {
-        return messages.allIds.every(id => messages.byIds[id].selected);
-    }
-
-    const areSomeMessagesSelected = () => {
-        return messages.allIds.some(id => messages.byIds[id].selected);
-    }
 
     const renderButtonSelectedClassName = () => {
         let className = 'fa fa';
 
-        if (areAllMessagesSelected()) {
+        if (areAllMessagesSelected(messages)) {
             className += '-check'
-        } else if (areSomeMessagesSelected()) {
+        } else if (areSomeMessagesSelected(messages)) {
             className += '-minus'
         }
 
@@ -65,7 +31,7 @@ const Toolbar = ({
     const selectProps = () => {
         return {
             className: 'form-control label-select',
-            disabled:  !areSomeMessagesSelected(),
+            disabled:  !areSomeMessagesSelected(messages),
             value: ''
         }
     }
@@ -84,8 +50,8 @@ const Toolbar = ({
             <div className="col-md-12">
 
                 <p className="pull-right">
-                    <span className="badge badge">{ numOfUnreadMessages() }</span>
-                    unread message{numOfUnreadMessages()>1?'s':''}
+                    <span className="badge badge">{ numOfUnreadMessages(messages) }</span>
+                    unread message{ numOfUnreadMessages(messages)>1?'s':''}
                 </p>
 
                 <Switch>
@@ -97,41 +63,43 @@ const Toolbar = ({
                     <Route render={() => (
                         <Link to="/compose" className="btn btn-danger">
                             <i className='fa fa-plus'></i> </Link>
-
                     )}/>
 
                 </Switch>
 
                 <button className="btn btn-default"
-                        onClick={ handleMessagesSelected }>
+                        onClick={ () => actions.bulkMessageSelected(!areAllMessagesSelected(messages)) }>
                     <i className={renderButtonSelectedClassName()}></i>
                 </button>
 
                 <button className="btn btn-default"
-                        disabled={ !areSomeMessagesSelected() }
-                        onClick={ handleMessageReadSelected }>
+                        disabled={ !areSomeMessagesSelected(messages) }
+                        onClick={ () => actions.updateMessageReadUnread(getSelectedMessageIds(messages), true) }>
                     Mark As Read
                 </button>
 
                 <button className="btn btn-default"
-                        disabled={ !areSomeMessagesSelected() }
-                        onClick={ handleMessageUnreadSelected }>
+                        disabled={ !areSomeMessagesSelected(messages) }
+                        onClick={ () => actions.updateMessageReadUnread(getSelectedMessageIds(messages), false) }>
                     Mark As Unread
                 </button>
 
-                <select {...selectProps() } onChange={ handleAddLabel }>
+                <select {...selectProps() }
+                        onChange={ (e) => actions.addLabel(getSelectedMessageIds(messages), e.target.value) }>
                     <option value="">Apply label</option>
                     { selectOptions() }
                 </select>
 
-                <select {...selectProps()} onChange={ handleRemoveLabel }>
+                <select {...selectProps()}
+                        onChange={ (e) => actions.removeLabel(getSelectedMessageIds(messages), e.target.value) }>
                     <option value="">Remove label</option>
                     { selectOptions() }
                 </select>
 
                 <button className="btn btn-default"
-                        disabled={ !areSomeMessagesSelected() }
-                        onClick={ handleDeleteMessages }>
+                        disabled={ !areSomeMessagesSelected(messages) }
+                        onClick={ () => actions.deleteSelectedMessages(getSelectedMessageIds(messages))}
+                >
                     <i className="fa fa-trash-o"></i>
                 </button>
             </div>

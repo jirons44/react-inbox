@@ -1,10 +1,17 @@
 import * as types from '../actions/actionTypes';
 import MessagesApi from '../api/messagesApi';
 
+
+const messagesLoaded = messages => {
+    return { type: types.LOAD_MESSAGES, messages }
+}
+
+
 export function fetchMessages() {
     return async dispatch => {
         const messages = await MessagesApi.getAllMessages();
-        dispatch({ type: types.LOAD_MESSAGES, messages })
+        // dispatch({ type: types.LOAD_MESSAGES, messages })
+        dispatch(messagesLoaded(messages));
     }
 }
 
