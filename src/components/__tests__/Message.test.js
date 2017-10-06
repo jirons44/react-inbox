@@ -1,16 +1,12 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
 import { connect } from 'react-redux';
 import { Link, Route, MemoryRouter } from 'react-router-dom';
-import ReactDOM from 'react-dom'
-
 
 import Message, { mapDispatchToProps } from '../Message';
 
 let wrapper;
 let mockCheckboxChangedFn = jest.fn();
-
 
 const aMessage = {
     selected: false,
@@ -27,8 +23,9 @@ const mockActions = {
 }
 
 const createMessageComponent = (message, actions) => {
-    wrapper = shallow(
-         <Message.WrappedComponent message={message} actions={actions} />
+
+    wrapper = shallow (
+            <Message.WrappedComponent message={message} actions={actions} />
     );
 }
 
@@ -102,28 +99,40 @@ describe('Message Component', () => {
             expect(component.exists()).toBeTruthy();
         });
 
-        it('does not render MessageBody Route path default', () => {
-            const component = wrapper.find('MessageBody');
+        describe('renders Route / MessageBody', () => {
 
-            expect(component.exists()).toBeFalsy();
-        });
+            beforeEach(() => {
 
-        it('renders MessageBody when Route path /messages/1', () => {
-            //TODO: come on...get this test to work
-            // const component = ReactDOM.render(
-            //         <MemoryRouter initialEntries={[ '/messages/1' ]}>
-            //             <Message message={aMessage} actions={mockActions} />
-            //         </MemoryRouter>
-            // , div);
-            // createMessageComponent(aMessage, mockActions);
+                //<MemoryRouter initialEntries={[ '/messages/1' ]}>
 
-            // const component = renderer.create(
-            //     <MemoryRouter initialEntries={[ '/messages/1' ]}>
-            //         <Message.WrappedComponent message={aMessage} actions={mockActions} />
-            //     </MemoryRouter>
-            // );
+                wrapper = shallow(
+                    <MemoryRouter initialEntries={[ '/messages/1' ]} >
+                        <Message.WrappedComponent message={aMessage} actions={mockActions} />
+                    </MemoryRouter>
+                );
 
-//            console.log('@@@@', component);
+                // console.log(wrapper.debug());
+
+            });
+
+            it('does not render MessageBody Route path default', () => {
+
+                const messageComponent = wrapper.find('Message');
+                expect(messageComponent.exists()).toBeTruthy();
+
+                // const component = wrapper.find('Connect(MessageBody)')
+                // console.log("@@@@MessageComponent", JSON.stringify(messageComponent))
+
+                // const component = messageComponent.find('MessageBody');
+                // expect(component.exists()).toBeTruthy();
+
+
+            });
+
+            it('renders MessageBody when Route path /messages/1', () => {
+                //TODO: come on...get this test to work
+
+            });
         });
 
         describe('renders Classnames when the message is selected vs unselected', () => {

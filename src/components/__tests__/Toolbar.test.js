@@ -22,7 +22,7 @@ test('renders the same way every time', () => {
 
     //TODO: passing in messages gives invariant messatge
     const tree = renderer.create(
-        <Toolbar.WrappedComponent messages={emptyMessages}/>)
+        <Toolbar.WrappedComponent messages={emptyMessages} />)
         .toJSON();
 
     expect(tree).toMatchSnapshot();

@@ -57,14 +57,14 @@ const Toolbar = ({
                 <Switch>
                     <Route path="/compose" exact render={() => (
                         <Link to="/" className="btn btn-danger">
-                            <i className='fa fa-minus'></i> </Link>
-
-                            )}/>
+                            <i className='fa fa-minus'></i>
+                        </Link>
+                    )}/>
                     <Route render={() => (
                         <Link to="/compose" className="btn btn-danger">
-                            <i className='fa fa-plus'></i> </Link>
+                            <i className='fa fa-plus'></i>
+                        </Link>
                     )}/>
-
                 </Switch>
 
                 <button className="btn btn-default"

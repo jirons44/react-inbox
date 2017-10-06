@@ -27,8 +27,8 @@ class App extends Component {
           <div>
               <ToolBar messages={ this.props.messages }/>
 
-              <Route exact path="/compose" component={ props =>
-                  <ComposedForm onAddMessage={this.handleOnAddMessage} {...props} /> }/>
+              <Route exact path="/compose" render={ () =>
+                  <ComposedForm onAddMessage={this.handleOnAddMessage}  /> }/>
 
               <Messages />
           </div>

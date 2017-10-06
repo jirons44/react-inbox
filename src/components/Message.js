@@ -28,6 +28,7 @@ const Message = ({
     }
 
     return (
+
         <div>
             <div className={ rowClassName() }>
                 <div className="col-xs-1">
@@ -41,7 +42,8 @@ const Message = ({
                         </div>
                         <div className="col-xs-2">
                             <i className={`star fa fa-star${!!message.starred ? '' : '-o'}`}
-                               onClick = { ()=> actions.updateMessageStarred(message.id, !message.starred) }></i>
+                               onClick = { ()=> actions.updateMessageStarred(message.id, !message.starred) }>
+                            </i>
                         </div>
                     </div>
                 </div>
@@ -50,13 +52,15 @@ const Message = ({
                     {
                        renderLabels()
                     }
-                    <Link to={`/messages/${message.id}`} onClick={()=> actions.toggelMessageSelected(message.id)}>{ message.subject }</Link>
+                    <Link to={`/messages/${message.id}`}
+                          onClick={() => actions.toggelMessageSelected(message.id)}>{ message.subject }
+                    </Link>
                 </div>
             </div>
 
-                <Route path={`/messages/${message.id}`} render={()=> (
-                    <MessageBody message={message} />
-                )}/>
+            <Route path={`/messages/${message.id}`}
+                   render={() =>  <MessageBody message={message} />}
+            />
         </div>
     )
 }

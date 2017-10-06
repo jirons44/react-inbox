@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom'
 
 const ComposedForm = ({
       history,
@@ -54,4 +55,4 @@ const ComposedForm = ({
         )
 }
 
-export default ComposedForm;
+export default withRouter(ComposedForm);

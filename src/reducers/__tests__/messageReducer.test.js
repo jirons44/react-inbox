@@ -34,7 +34,7 @@ describe('messageReducer Test ', () => {
         let existingState = {someother:'other', allIds:[1], byIds:{}};
         let newState = {someother:'other', allIds:[], byIds:{} };
 
-        expect(messageReducer(existingState,action)).toEqual(newState);
+        expect(messageReducer(existingState, action)).toEqual(newState);
     });
 
     it("overrides existing state when action is TOGGLE_MESSAGE_SELECTED",  () => {
@@ -83,11 +83,23 @@ describe('messageReducer Test ', () => {
         expect(messageReducer(existingState,action)).toEqual(newState);
     });
 
-    it("overrides existing state when action is BULK_MESSAGE_SELECTED",  () => {
+    it("overrides existing state selected true, when action is BULK_MESSAGE_SELECTED",  () => {
         const byIdsSelectedTrue = {'1': {id: 1, selected: true,}};
         const byIdsSelectedFalse = {'1': {id: 1, selected: false,}};
 
         const action ={type:'BULK_MESSAGE_SELECTED',selected:true};
+
+        const existingState = {someother:'other', allIds:[1], byIds: byIdsSelectedFalse};
+        const newState =      {someother:'other', allIds:[1], byIds: byIdsSelectedTrue};
+
+        expect(messageReducer(existingState,action)).toEqual(newState);
+    });
+
+    it("overrides existing state when action is BULK_MESSAGE_SELECTED",  () => {
+        const byIdsSelectedTrue = {'1': {id: 1, selected: false,}};
+        const byIdsSelectedFalse = {'1': {id: 1, selected: false,}};
+
+        const action ={type:'BULK_MESSAGE_SELECTED',selected:false};
 
         const existingState = {someother:'other', allIds:[1], byIds: byIdsSelectedFalse};
         const newState =      {someother:'other', allIds:[1], byIds: byIdsSelectedTrue};
@@ -107,7 +119,7 @@ describe('messageReducer Test ', () => {
         expect(messageReducer(existingState,action)).toEqual(newState);
     });
 
-    it("overrides existing state when action is ADD_LABELS",  () => {
+    it("updates message with new label, when action is ADD_LABELS and a new message is sent",  () => {
         const byIdsNoLabel = {'1': {id: 1, selected: true, labels: [] }};
         const byIdsWithLabel = {'1': {id: 1, selected: true, labels: ['myLabel'] }};
 
@@ -119,13 +131,36 @@ describe('messageReducer Test ', () => {
         expect(messageReducer(existingState,action)).toEqual(newState);
     });
 
-    it("overrides existing state when action is REMOVE_LABELS",  () => {
+    it("dose not add an existing label, when action is ADD_LABELS and same label sent",  () => {
+        const byIdsNoLabel = {'1': {id: 1, selected: true, labels: ['myLabel'] }};
+        const byIdsWithLabel = {'1': {id: 1, selected: true, labels: ['myLabel'] }};
+
+        const action ={type:'ADD_LABELS',ids:[1], label:'myLabel'};
+
+        const existingState = {someother:'other', allIds:[1], byIds: byIdsNoLabel};
+        const newState =      {someother:'other', allIds:[1], byIds: byIdsWithLabel};
+
+        expect(messageReducer(existingState,action)).toEqual(newState);
+    });
+
+    it("removes existing label, when action is REMOVE_LABELS and existing label is sent",  () => {
         const byIdsNoLabel = {'1': {id: 1, selected: true, labels: [] }};
         const byIdsWithLabel = {'1': {id: 1, selected: true, labels: ['myLabel'] }};
 
         const action ={type:'REMOVE_LABELS',ids:[1], label:'myLabel'};
 
         const existingState = {someother:'other', allIds:[1], byIds: byIdsWithLabel};
+        const newState =      {someother:'other', allIds:[1], byIds: byIdsNoLabel};
+
+        expect(messageReducer(existingState,action)).toEqual(newState);
+    });
+
+    it("does not delete a label when labal does not exist, when action is REMOVE_LABELS",  () => {
+        const byIdsNoLabel = {'1': {id: 1, selected: true, labels: [] }};
+
+        const action ={type:'REMOVE_LABELS',ids:[1], label:'myLabel'};
+
+        const existingState = {someother:'other', allIds:[1], byIds: byIdsNoLabel};
         const newState =      {someother:'other', allIds:[1], byIds: byIdsNoLabel};
 
         expect(messageReducer(existingState,action)).toEqual(newState);
@@ -153,5 +188,7 @@ describe('messageReducer Test ', () => {
         expect(messageReducer(existingState,action)).toEqual(newState);
     });
 
-
+/*
+TODO:  use a package called DeepFreeze to ensure state is not mutated
+ */
 });
